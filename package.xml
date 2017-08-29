@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>controller_interface</name>
+  <name>controller</name>
   <version>0.0.0</version>
   <description>ROS node for drive motors and LEDs of duckietown@pg robot</description>
 
