@@ -118,7 +118,7 @@ class motor_driver:
         gpio.setup(self.FRONT_2,gpio.OUT)
         gpio.setup(self.REAR_2,gpio.OUT)
         # subscribe ros topic
-        rospy.Subscriber("cmd_vel", Twist, self.callback) # subscribe to cmd_vel topic
+        rospy.Subscriber("cmd_vel", Twist, self.callback, queue_size=1) # subscribe to cmd_vel topic
 	rospy.loginfo("Initialized controller class")
 
     def callback(self,data):
