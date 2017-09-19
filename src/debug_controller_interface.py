@@ -72,6 +72,12 @@ class motor_driver:
             self.rightSpeed = -self.rightSpeed
             if(self.rightSpeed > 255):
                 self.rightSpeed = 255
+	# ADD CONTROL IF TOO SLOW 
+	## FIRST IMPLEMENTATION
+	if self.leftSpeed < 40:
+		self.leftSpeed=40
+	if self.rightSpeed < 40:
+		self.rightSpeed=40
 
     def setMotorSpeed(self):
         rospy.loginfo("Set motor speed Turn on front lights")
