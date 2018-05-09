@@ -6,13 +6,10 @@
 # to move the motors using GoPiGo3 libraries
 #
 
-
-
 import rospy,sys,atexit,time
 import easygopigo3 as easy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
-
 
 class motor_driver:
 
@@ -25,9 +22,7 @@ class motor_driver:
         # turn off motors
         self.gpg.stop()
 
-
     def speedControl(self):
-
 	if not (self.leftSpeed < 0 and self.rightSpeed < 0):
             if(self.leftSpeed == self.rightSpeed):
 	        self.dir = 0
@@ -36,12 +31,9 @@ class motor_driver:
 	            self.dir = 1
 	        else:
 	            self.dir = 2
-	        
-		
 
     def setMotorSpeed(self):
         rospy.loginfo("Set motor speed Turn on front lights")
-        
         if(self.dir == 0): # move motor forward
             self.gpg.forward()
         elif(self.dir == 1): # move motor right
@@ -51,11 +43,9 @@ class motor_driver:
         else: # move motor backward
             self.gpg.backward()
 
-
     def __init__(self):
         # motor setup
         self.gpg = easy.EasyGoPiGo3() # GoPiGo3 Motor
-
         rospy.Subscriber("cmd_vel", Twist, self.callback, queue_size=1) # subscribe to cmd_vel topic
 	rospy.loginfo("Initialized controller class")
 
