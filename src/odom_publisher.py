@@ -18,6 +18,7 @@ def odom_publisher():
 	rospy.init_node('odom_publisher', anonymous=True)
 	GPG = easy.EasyGoPiGo3()
 	odom_pub = rospy.Publisher("odom", Odometry, queue_size=10)
+	odom_broadcaster = tf.TransformBroadcaster()
 	current_time = rospy.Time.now()
 	last_time = rospy.Time.now()
 	last_theta = 0
@@ -44,6 +45,14 @@ def odom_publisher():
 			y = last_y + vy * dt
 			# since all odometry is 6DOF we'll need a quaternion created from yaw
 			odom_quat = tf.transformations.quaternion_from_euler(0, 0, current_theta)
+			# send transform base_link odom
+			odom_broadcaster.sendTransform(
+			(x, y, 0.),
+			odom_quat,
+			current_time,
+			"base_link",
+			"odom"
+			)
 			# next, we'll publish the odometry message over ROS
 			odom = Odometry()
 			odom.header.stamp = current_time
