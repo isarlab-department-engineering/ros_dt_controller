@@ -5,12 +5,12 @@
 # reads Twist messages from the controller topic and decodes it
 # to move the motors using Adafruit libraries
 #
-# script by Andrea Fioroni - andrifiore@gmail.com
-# GitHub repo: https://github.com/isarlab-department-engineering/ros-joy-controller/tree/master
+# GitHub repo: https://github.com/isarlab-department-engineering/ros_dt_controller
 #
 
-## NOTE. DEBUG VERSION USES BOTH X AND Y
-## NEED TO FIX THIS ASAP
+# IMPORTANT NOTE
+# THIS SCRIPT ATM DOESN'T TAKE A "REAL" TWIST MESSAGE
+# Twist/Linear/X&Y are the speed of the 2 motors 
 
 import rospy,sys,atexit,time
 import RPi.GPIO as gpio
@@ -20,34 +20,15 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 
 class motor_driver:
 
-    # LED PIN configuration
-    FRONT_1     = 21
-    FRONT_2     = 20
-    REAR_1      = 19
-    REAR_2      = 16
-
     def atExitFunction(self):
         self.turnOffMotors()
-        self.turnOffLights()
 
     def turnOffMotors(self):
         # log stop info
-        rospy.loginfo("Turn off motors Turn on stop lights")
+        rospy.loginfo("Turn off motors")
         # turn off motors
-        self.mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
-        self.mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
-        # turn on stop lights
-        gpio.output(self.REAR_1,gpio.LOW)
-        gpio.output(self.REAR_2,gpio.LOW)
-        # turn off front lights
-        gpio.output(self.FRONT_1,gpio.HIGH)
-        gpio.output(self.FRONT_2,gpio.HIGH)
-
-    def turnOffLights(self):
-        gpio.output(self.REAR_1,gpio.LOW)
-        gpio.output(self.REAR_2,gpio.LOW)
-        gpio.output(self.FRONT_1,gpio.LOW)
-        gpio.output(self.FRONT_2,gpio.LOW)
+        self.mh.getMotor(left_motor).run(Adafruit_MotorHAT.RELEASE)
+        self.mh.getMotor(right_motor).run(Adafruit_MotorHAT.RELEASE)
 
     def speedControl(self):
         # check if l and r speed are in the -255 - 255 range
@@ -80,7 +61,7 @@ class motor_driver:
 		self.rightSpeed=40
 
     def setMotorSpeed(self):
-        rospy.loginfo("Set motor speed Turn on front lights")
+        rospy.loginfo("Set motor speed")
         self.mLeft.setSpeed(int(self.leftSpeed))
         self.mRight.setSpeed(int(self.rightSpeed))
         if(self.leftDir == 1): # move left motor forward
@@ -91,35 +72,25 @@ class motor_driver:
             self.mRight.run(Adafruit_MotorHAT.FORWARD)
         else: # move right motor backward
             self.mRight.run(Adafruit_MotorHAT.BACKWARD)
-        # turn off stop lights
-        gpio.output(self.REAR_1,gpio.HIGH)
-        gpio.output(self.REAR_2,gpio.HIGH)
-        # turn on front lights
-        gpio.output(self.FRONT_1,gpio.LOW)
-        gpio.output(self.FRONT_2,gpio.LOW)
 
     def __init__(self):
+        # motors pin
+        left_motor = 1
+        right_motor = 2
         # motor HAT setup
         self.mh = Adafruit_MotorHAT(addr=0x60) # setup Adafruit Motor HAT on 0x60 address
         # setup 2 motors
-        self.mLeft = self.mh.getMotor(1) # left motor
-        self.mRight = self.mh.getMotor(2) # right motor
+        self.mLeft = self.mh.getMotor(left_motor) # left motor
+        self.mRight = self.mh.getMotor(right_motor) # right motor
         # speed vars
         self.leftSpeed = 0
         self.rightSpeed = 0
         # dir vars (1 = move forward, -1 = move backward)
         self.leftDir = 1
         self.rightDir = 1
-        # set up and initialize led 
-        gpio.setmode(gpio.BCM)
-        gpio.setwarnings(False)
-        gpio.setup(self.FRONT_1,gpio.OUT)
-        gpio.setup(self.REAR_1,gpio.OUT)
-        gpio.setup(self.FRONT_2,gpio.OUT)
-        gpio.setup(self.REAR_2,gpio.OUT)
         # subscribe ros topic
         rospy.Subscriber("cmd_vel", Twist, self.callback, queue_size=1) # subscribe to cmd_vel topic
-	rospy.loginfo("Initialized controller class")
+	    rospy.loginfo("Initialized controller class")
 
     def callback(self,data):
         rospy.loginfo(rospy.get_caller_id() + " Incoming Twist Message")
@@ -136,7 +107,7 @@ def main(args):
     @atexit.register
     def atExitClass():
     	m_driver.atExitFunction()
-    rospy.init_node('ros_motor_driver', anonymous=True) # create a ros_motor_driver node
+    rospy.init_node('controller_interface', anonymous=True) # create a ros_motor_driver node
     try:
 	    rospy.spin() # loop until shutdown
     except KeyboardInterrupt:
