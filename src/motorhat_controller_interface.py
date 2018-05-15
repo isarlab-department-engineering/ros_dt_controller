@@ -20,6 +20,10 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 
 class motor_driver:
 
+    # motors pin
+    left_motor = 1
+    right_motor = 2
+
     def atExitFunction(self):
         self.turnOffMotors()
 
@@ -27,8 +31,8 @@ class motor_driver:
         # log stop info
         rospy.loginfo("Turn off motors")
         # turn off motors
-        self.mh.getMotor(left_motor).run(Adafruit_MotorHAT.RELEASE)
-        self.mh.getMotor(right_motor).run(Adafruit_MotorHAT.RELEASE)
+        self.mh.getMotor(self.left_motor).run(Adafruit_MotorHAT.RELEASE)
+        self.mh.getMotor(self.right_motor).run(Adafruit_MotorHAT.RELEASE)
 
     def speedControl(self):
         # check if l and r speed are in the -255 - 255 range
@@ -74,14 +78,11 @@ class motor_driver:
             self.mRight.run(Adafruit_MotorHAT.BACKWARD)
 
     def __init__(self):
-        # motors pin
-        left_motor = 1
-        right_motor = 2
         # motor HAT setup
         self.mh = Adafruit_MotorHAT(addr=0x60) # setup Adafruit Motor HAT on 0x60 address
         # setup 2 motors
-        self.mLeft = self.mh.getMotor(left_motor) # left motor
-        self.mRight = self.mh.getMotor(right_motor) # right motor
+        self.mLeft = self.mh.getMotor(self.left_motor) # left motor
+        self.mRight = self.mh.getMotor(self.right_motor) # right motor
         # speed vars
         self.leftSpeed = 0
         self.rightSpeed = 0
@@ -90,7 +91,7 @@ class motor_driver:
         self.rightDir = 1
         # subscribe ros topic
         rospy.Subscriber("cmd_vel", Twist, self.callback, queue_size=1) # subscribe to cmd_vel topic
-	    rospy.loginfo("Initialized controller class")
+        rospy.loginfo("Initialized controller class")
 
     def callback(self,data):
         rospy.loginfo(rospy.get_caller_id() + " Incoming Twist Message")
