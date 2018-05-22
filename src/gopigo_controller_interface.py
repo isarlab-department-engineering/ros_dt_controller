@@ -47,7 +47,7 @@ class motor_driver:
         # motor setup
         self.gpg = easy.EasyGoPiGo3() # GoPiGo3 Motor
         rospy.Subscriber("cmd_vel", Twist, self.callback, queue_size=1) # subscribe to cmd_vel topic
-		rospy.loginfo("Initialized controller class")
+	rospy.loginfo("Initialized controller class")
 
     def callback(self,data):
         rospy.loginfo(rospy.get_caller_id() + " Incoming Twist Message")
