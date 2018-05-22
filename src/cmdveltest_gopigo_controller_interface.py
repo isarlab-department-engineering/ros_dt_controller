@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import rospy,atexit
+import rospy,atexit,sys
 import tf.transformations
 import easygopigo3 as easy
 import numpy as np
@@ -29,12 +29,13 @@ class motor_driver:
 		rospy.loginfo("Linear Components: [%f, %f, %f]"%(data.linear.x, data.linear.y, data.linear.z))
 		rospy.loginfo("Angular Components: [%f, %f, %f]"%(data.angular.x, data.angular.y, data.angular.z))
 		# Use the kinematics of your robot to map linear and angular velocities into motor commands
-		vLeft = data.linear.x + (data.linear.z * self.WHEEL_DISTANCE / 2)
-		vRight = data.linear.x - (data.linear.x * self.WHEEL_DISTANCE / 2)
-		self.leftSpeed = np.degrees(vLeft / self.WHEEL_RADIUS)
-    		self.rightSpeed = np.degrees(vRight / self.WHEEL_RADIUS)
-		self.gpg.set_motor_dps(self.gpg.MOTOR_LEFT,self.leftSpeed)
-		self.gpg.set_motor_dps(self.gpg.MOTOR_RIGHT,self.leftSpeed)    
+		vLeft = data.linear.x + (data.angular.z * self.WHEEL_DISTANCE / 2)
+		vRight = data.linear.x - (data.angular.z * self.WHEEL_DISTANCE / 2)
+		self.leftSpeed = 360* vLeft / (2 * np.pi * self.WHEEL_RADIUS)
+    		self.rightSpeed = 360 * vRight / (2 * np.pi * self.WHEEL_RADIUS)
+		rospy.loginfo("Left,Right speed: [%d, %d]"%(self.leftSpeed, self.rightSpeed))
+		self.gpg.set_motor_dps(self.gpg.MOTOR_LEFT,int(self.leftSpeed))
+		self.gpg.set_motor_dps(self.gpg.MOTOR_RIGHT,int(self.rightSpeed))    
 
 	def __init__(self):
 		# motor setup
