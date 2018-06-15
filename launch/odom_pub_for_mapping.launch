@@ -1,0 +1,20 @@
+<launch>
+  	<!-- Start Master and Controller for Move -->
+
+        <node name="master_node" pkg="master_node" type="duckie_master_node_priority.py"/>
+        <node name="controller_gopigo" pkg="controller" type="cmdveltest_gopigo_controller_interface.py"/>
+
+  	<!-- Start sick_tim -->
+
+	<include file="$(find sick_tim)/launch/sick_tim571_2050101.launch" />
+
+  	<!-- Start Odometry and Tf -->
+
+        <node name="controller_odom_pub" pkg="controller" type="odom_publisher.py"/>
+        <node pkg="tf" type="static_transform_publisher" name="transform_broadcaster" args="0 0 0 0 0 0 1 base_link laser 50" />
+
+
+  	<!-- Start gmapping -->
+
+        <node name="gmapping" pkg="gmapping" type="slam_gmapping"/>
+</launch>

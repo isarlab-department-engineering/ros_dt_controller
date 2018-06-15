@@ -1,0 +1,5 @@
+  
+<launch>
+        <node name="master_node" pkg="master_node" type="duckie_master_node_priority.py"/>
+        <node name="controller_gopigo" pkg="controller" type="cmdveltest_gopigo_controller_interface.py"/>
+</launch>

@@ -1,0 +1,14 @@
+<launch>
+  <!-- Start navigation -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam command="load" file="yaml/costmap_common_params.yaml" ns="local_costmap"/>
+        <rosparam command="load" file="yaml/costmap_common_params.yaml" ns="global_costmap"/>
+        <rosparam command="load" file="yaml/local_costmap_params.yaml" ns="local_costmap"/>
+        <rosparam command="load" file="yaml/global_costmap_params.yaml" ns="global_costmap"/>
+        <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
+        <param name="controller_frequency" value="5.0"/>
+        <!-- rosparam command="load" file="yaml/global_params.yaml" ns="/move_base/"/-->
+        <rosparam command="load" file="yaml/base_local_planner_params.yaml" ns="/move_base/"/>
+    </node>
+
+</launch>
