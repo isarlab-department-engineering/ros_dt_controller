@@ -29,8 +29,8 @@ class motor_driver:
 		rospy.loginfo("Linear Components: [%f, %f, %f]"%(data.linear.x, data.linear.y, data.linear.z))
 		rospy.loginfo("Angular Components: [%f, %f, %f]"%(data.angular.x, data.angular.y, data.angular.z))
 		# Use the kinematics of your robot to map linear and angular velocities into motor commands
-		vLeft = data.linear.x + (data.angular.z * self.WHEEL_DISTANCE / 2)
-		vRight = data.linear.x - (data.angular.z * self.WHEEL_DISTANCE / 2)
+		vLeft = data.linear.x - (data.angular.z * self.WHEEL_DISTANCE / 2)
+		vRight = data.linear.x + (data.angular.z * self.WHEEL_DISTANCE / 2)
 		self.leftSpeed = 360* vLeft / (2 * np.pi * self.WHEEL_RADIUS)
     		self.rightSpeed = 360 * vRight / (2 * np.pi * self.WHEEL_RADIUS)
 		rospy.loginfo("Left,Right speed: [%d, %d]"%(self.leftSpeed, self.rightSpeed))
