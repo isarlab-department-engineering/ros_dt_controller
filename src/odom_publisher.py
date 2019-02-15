@@ -36,6 +36,8 @@ def odom_publisher():
 			delta_deg_right = current_deg_right - last_deg_right
 			vel_left = (np.radians(delta_deg_left)/dt)*wheel_radius
 			vel_right = (np.radians(delta_deg_right)/dt)*wheel_radius
+			if(vel_right != 0.0 or vel_left != 0.0):
+				print("Vel right weel: ",vel_right,";  Vel left weel:", vel_left)
 			# calculate x-y-theta velocity
 			vel_theta = (vel_right - vel_left) / wheel_distance
 			current_theta = (vel_theta * dt) + last_theta
@@ -63,7 +65,7 @@ def odom_publisher():
 			odom.child_frame_id = "base_link"
 			odom.twist.twist = Twist(Vector3(vx, vy, 0), Vector3(0, 0, vel_theta))
 			# publish the message
-			print(odom)
+			#print(odom)
 			odom_pub.publish(odom)
 			# update variables
 			last_time = current_time
