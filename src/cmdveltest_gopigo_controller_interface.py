@@ -5,7 +5,6 @@ import tf.transformations
 import easygopigo3 as easy
 import numpy as np
 from geometry_msgs.msg import Twist
-from controller.msg import *
 
 class motor_driver: 
     
@@ -33,7 +32,7 @@ class motor_driver:
         vLeft = data.linear.x - (data.angular.z * self.WHEEL_DISTANCE / 2)
         vRight = data.linear.x + (data.angular.z * self.WHEEL_DISTANCE / 2)
         self.leftSpeed = 360* vLeft / (2 * np.pi * self.WHEEL_RADIUS)
-            self.rightSpeed = 360 * vRight / (2 * np.pi * self.WHEEL_RADIUS)
+        self.rightSpeed = 360 * vRight / (2 * np.pi * self.WHEEL_RADIUS)
         rospy.loginfo("Left,Right speed: [%d, %d]"%(self.leftSpeed, self.rightSpeed))
         self.gpg.set_motor_dps(self.gpg.MOTOR_LEFT,int(self.leftSpeed))
         self.gpg.set_motor_dps(self.gpg.MOTOR_RIGHT,int(self.rightSpeed))  
